@@ -99,34 +99,30 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           </div>
 
           {/* Corner ornaments */}
-          {(["tl", "tr", "bl", "br"] as const).map((pos) => {
-            const map = {
-              tl: { top: 10, left: 10, rotate: 0 },
-              tr: { top: 10, right: 10, rotate: 90 },
-              br: { bottom: 10, right: 10, rotate: 180 },
-              bl: { bottom: 10, left: 10, rotate: 270 },
-            } as const;
-            const s = map[pos];
-            return (
-              <svg
-                key={pos}
-                width="22"
-                height="22"
-                viewBox="0 0 22 22"
-                className="absolute"
-                style={{ ...s, transform: `rotate(${s.rotate}deg)` }}
-                aria-hidden
-              >
-                <path
-                  d="M1 9 L1 1 L9 1"
-                  stroke="#d4af37"
-                  strokeWidth="1"
-                  fill="none"
-                  opacity="0.8"
-                />
-              </svg>
-            );
-          })}
+          {([
+            { key: "tl", style: { top: 10, left: 10, transform: "rotate(0deg)" } },
+            { key: "tr", style: { top: 10, right: 10, transform: "rotate(90deg)" } },
+            { key: "br", style: { bottom: 10, right: 10, transform: "rotate(180deg)" } },
+            { key: "bl", style: { bottom: 10, left: 10, transform: "rotate(270deg)" } },
+          ] as const).map(({ key, style }) => (
+            <svg
+              key={key}
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              className="absolute"
+              style={style}
+              aria-hidden
+            >
+              <path
+                d="M1 9 L1 1 L9 1"
+                stroke="#d4af37"
+                strokeWidth="1"
+                fill="none"
+                opacity="0.8"
+              />
+            </svg>
+          ))}
         </div>
       </motion.button>
 
