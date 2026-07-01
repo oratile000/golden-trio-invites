@@ -187,6 +187,63 @@ export function EventTimeline() {
       </div>
 
       <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 1 }}
+        className="mx-auto max-w-4xl mt-24 relative overflow-hidden"
+        style={{
+          border: "1.5px solid rgba(212,175,55,0.55)",
+          background:
+            "linear-gradient(160deg, rgba(212,175,55,0.10) 0%, rgba(10,10,10,0.6) 60%, rgba(212,175,55,0.08) 100%)",
+          boxShadow:
+            "0 30px 80px -30px rgba(0,0,0,0.9), inset 0 0 60px rgba(212,175,55,0.06)",
+        }}
+      >
+        <div
+          aria-hidden
+          className="absolute inset-3 pointer-events-none"
+          style={{ border: "1px solid rgba(212,175,55,0.25)" }}
+        />
+        <div className="relative px-6 py-14 md:py-20 md:px-16 text-center">
+          <p
+            className="font-label uppercase text-gold-deep"
+            style={{ fontSize: "clamp(0.75rem, 1.4vw, 0.9rem)", letterSpacing: "0.55em" }}
+          >
+            The Evening Requires
+          </p>
+          <h3
+            className="font-display italic text-gradient-gold mt-5"
+            style={{
+              fontSize: "clamp(2.4rem, 7vw, 4.5rem)",
+              letterSpacing: "0.03em",
+              lineHeight: 1.05,
+            }}
+          >
+            Dress Code
+          </h3>
+          <GoldDivider className="my-8 mx-auto" width={100} />
+          <p
+            className="font-display text-cream"
+            style={{
+              fontSize: "clamp(1.8rem, 5vw, 3rem)",
+              letterSpacing: "0.35em",
+              lineHeight: 1.2,
+            }}
+          >
+            ALL BLACK
+          </p>
+          <p
+            className="font-serif italic text-gold-deep mt-6 mx-auto max-w-lg"
+            style={{ fontSize: "clamp(1rem, 1.7vw, 1.15rem)", lineHeight: 1.7 }}
+          >
+            Formal black attire — gowns, tuxedos, and suits.
+            Gold accents are welcomed, in honour of the evening.
+          </p>
+        </div>
+      </motion.div>
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
