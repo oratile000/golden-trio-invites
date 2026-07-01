@@ -36,7 +36,6 @@ const events: Event[] = [
     address: "780 Breed Street, Pretoria, 0182",
     mapsQuery: "La Perna Guesthouse, 780 Breed Street, Pretoria",
     icon: "dance",
-    note: "Dress code · All black",
   },
 ];
 
