@@ -157,14 +157,17 @@ export function RSVP() {
                 />
               </div>
 
-              <div className="pt-2 flex justify-center">
+              <div className="pt-2 flex flex-col items-center gap-3">
                 <button
                   type="submit"
                   disabled={!canSubmit}
                   className="group relative px-10 py-4 border border-gold text-gold font-label uppercase tracking-[0.4em] text-xs transition-all duration-500 ease-luxury hover:bg-gold hover:text-noir hover:shadow-[0_0_40px_rgba(212,175,55,0.5)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gold"
                 >
-                  Send RSVP
+                  Send via WhatsApp
                 </button>
+                <p className="font-serif text-gold-deep/80 text-xs tracking-[0.25em] uppercase">
+                  Opens WhatsApp to confirm with the hosts
+                </p>
               </div>
             </motion.form>
           ) : (
