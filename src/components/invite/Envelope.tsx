@@ -104,7 +104,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
             { key: "tr", style: { top: 10, right: 10, transform: "rotate(90deg)" } },
             { key: "br", style: { bottom: 10, right: 10, transform: "rotate(180deg)" } },
             { key: "bl", style: { bottom: 10, left: 10, transform: "rotate(270deg)" } },
-          ] as const).map(({ key, style }) => (
+          ] as Array<{ key: string; style: React.CSSProperties }>).map(({ key, style }) => (
             <svg
               key={key}
               width="22"
