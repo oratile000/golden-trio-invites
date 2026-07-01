@@ -195,8 +195,8 @@ export function RSVP() {
               </p>
               <p className="font-serif text-cream/85 mt-4" style={{ fontSize: "clamp(0.95rem, 1.6vw, 1.05rem)", lineHeight: 1.7 }}>
                 {form.attending === "yes"
-                  ? "Your response has been received. We cannot wait to celebrate this evening with you on the 23rd of September, 2026."
-                  : "Your response has been received. You will be dearly missed — thank you for being part of our journey."}
+                  ? "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 66 064 7265 to confirm. We cannot wait to celebrate with you on the 23rd of September, 2026."
+                  : "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 66 064 7265. You will be dearly missed — thank you for being part of our journey."}
               </p>
               <p className="font-label uppercase text-gold-deep mt-8" style={{ fontSize: "0.7rem", letterSpacing: "0.45em" }}>
                 With love — O · O · O
