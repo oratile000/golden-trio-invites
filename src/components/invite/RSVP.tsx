@@ -27,6 +27,17 @@ export function RSVP() {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
+    const attending = form.attending === "yes" ? "Joyfully attending" : "Regretfully unable to attend";
+    const lines = [
+      "*Matric Dance 2026 · RSVP*",
+      `Name: ${form.name.trim()}`,
+      `Guests: ${form.guests}`,
+      `Response: ${attending}`,
+    ];
+    if (form.message.trim()) lines.push(`Message: ${form.message.trim()}`);
+    const text = encodeURIComponent(lines.join("\n"));
+    const url = `https://wa.me/27660647265?text=${text}`;
+    window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
   };
 
@@ -146,14 +157,17 @@ export function RSVP() {
                 />
               </div>
 
-              <div className="pt-2 flex justify-center">
+              <div className="pt-2 flex flex-col items-center gap-3">
                 <button
                   type="submit"
                   disabled={!canSubmit}
                   className="group relative px-10 py-4 border border-gold text-gold font-label uppercase tracking-[0.4em] text-xs transition-all duration-500 ease-luxury hover:bg-gold hover:text-noir hover:shadow-[0_0_40px_rgba(212,175,55,0.5)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gold"
                 >
-                  Send RSVP
+                  Send via WhatsApp
                 </button>
+                <p className="font-serif text-gold-deep/80 text-xs tracking-[0.25em] uppercase">
+                  Opens WhatsApp to confirm with the hosts
+                </p>
               </div>
             </motion.form>
           ) : (
@@ -181,8 +195,8 @@ export function RSVP() {
               </p>
               <p className="font-serif text-cream/85 mt-4" style={{ fontSize: "clamp(0.95rem, 1.6vw, 1.05rem)", lineHeight: 1.7 }}>
                 {form.attending === "yes"
-                  ? "Your response has been received. We cannot wait to celebrate this evening with you on the 23rd of September, 2026."
-                  : "Your response has been received. You will be dearly missed — thank you for being part of our journey."}
+                  ? "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 66 064 7265 to confirm. We cannot wait to celebrate with you on the 23rd of September, 2026."
+                  : "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 66 064 7265. You will be dearly missed — thank you for being part of our journey."}
               </p>
               <p className="font-label uppercase text-gold-deep mt-8" style={{ fontSize: "0.7rem", letterSpacing: "0.45em" }}>
                 With love — O · O · O
