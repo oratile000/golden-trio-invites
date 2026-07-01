@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { motion } from "motion/react";
 
 export function Envelope({ onOpen }: { onOpen: () => void }) {
