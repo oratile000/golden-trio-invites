@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { LoadingScreen } from "@/components/invite/LoadingScreen";
@@ -11,7 +11,10 @@ import { Gallery } from "@/components/invite/Gallery";
 import { Closing } from "@/components/invite/Closing";
 import { Lightbox } from "@/components/invite/Lightbox";
 import { GoldParticles } from "@/components/invite/GoldParticles";
+import { Fireworks } from "@/components/invite/Fireworks";
+import { RSVP } from "@/components/invite/RSVP";
 import { photos } from "@/lib/photos";
+import songAsset from "@/assets/viva-the-legend.mp3.asset.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -20,12 +23,47 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [loading, setLoading] = useState(true);
   const [opened, setOpened] = useState(false);
+  const [fireworks, setFireworks] = useState(false);
+  const [muted, setMuted] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(t);
   }, []);
+
+  const handleOpen = () => {
+    setOpened(true);
+    setFireworks(true);
+    // Play song — user gesture satisfies autoplay policy
+    const a = audioRef.current;
+    if (a) {
+      a.volume = 0.55;
+      a.loop = true;
+      a.play().catch(() => {
+        /* ignore */
+      });
+    }
+    // stop fireworks state after a bit so it can retrigger later
+    window.setTimeout(() => setFireworks(false), 3500);
+  };
+
+  const handleClose = () => {
+    setOpened(false);
+    const a = audioRef.current;
+    if (a) {
+      a.pause();
+      a.currentTime = 0;
+    }
+  };
+
+  const toggleMute = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.muted = !a.muted;
+    setMuted(a.muted);
+  };
 
   const openPhoto = (i: number) => setLightboxIndex(i);
   const closePhoto = () => setLightboxIndex(null);
@@ -37,6 +75,10 @@ function Index() {
   return (
     <main className="relative min-h-screen bg-noir-radial text-cream overflow-hidden">
       <LoadingScreen visible={loading} />
+
+      <audio ref={audioRef} src={songAsset.url} preload="auto" loop />
+
+      <Fireworks active={fireworks} />
 
       {!loading && (
         <AnimatePresence mode="wait">
@@ -51,7 +93,7 @@ function Index() {
               style={{ perspective: 1200 }}
             >
               <GoldParticles count={12} />
-              <Envelope onOpen={() => setOpened(true)} />
+              <Envelope onOpen={handleOpen} />
             </motion.section>
           ) : (
             <motion.div
@@ -60,14 +102,38 @@ function Index() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <Welcome onClose={() => setOpened(false)} />
+              <Welcome onClose={handleClose} />
               <JourneyTimeline onOpenPhoto={openPhoto} />
               <EventTimeline />
               <Gallery onOpenPhoto={openPhoto} />
+              <RSVP />
               <Closing />
             </motion.div>
           )}
         </AnimatePresence>
+      )}
+
+      {opened && (
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute music" : "Mute music"}
+          className="fixed bottom-6 right-6 z-[95] h-11 w-11 rounded-full border border-gold/60 bg-noir/70 backdrop-blur text-gold flex items-center justify-center transition-all duration-300 ease-luxury hover:bg-gold hover:text-noir hover:scale-110"
+        >
+          {muted ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 5L6 9H2v6h4l5 4V5z" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 5L6 9H2v6h4l5 4V5z" />
+              <path d="M15.5 8.5a5 5 0 010 7" />
+              <path d="M18.5 5.5a9 9 0 010 13" />
+            </svg>
+          )}
+        </button>
       )}
 
       <Lightbox
