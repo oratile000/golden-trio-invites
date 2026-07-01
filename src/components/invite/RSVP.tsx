@@ -27,6 +27,17 @@ export function RSVP() {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
+    const attending = form.attending === "yes" ? "Joyfully attending" : "Regretfully unable to attend";
+    const lines = [
+      "*Matric Dance 2026 · RSVP*",
+      `Name: ${form.name.trim()}`,
+      `Guests: ${form.guests}`,
+      `Response: ${attending}`,
+    ];
+    if (form.message.trim()) lines.push(`Message: ${form.message.trim()}`);
+    const text = encodeURIComponent(lines.join("\n"));
+    const url = `https://wa.me/27660647265?text=${text}`;
+    window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
   };
 
