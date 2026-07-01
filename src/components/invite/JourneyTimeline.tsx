@@ -75,11 +75,13 @@ export function JourneyTimeline({ onOpenPhoto }: { onOpenPhoto: (i: number) => v
                   onClick={() => onOpenPhoto(i)}
                   className="group relative block w-full overflow-hidden transition-all duration-500 ease-luxury hover:scale-[1.02]"
                   style={{
-                    aspectRatio: "1 / 1",
+                    aspectRatio: "4 / 5",
                     maxWidth: 380,
                     margin: isRight ? "0 0 0 auto" : "0 auto 0 0",
                     border: "1.5px solid rgba(212,175,55,0.5)",
                     boxShadow: "0 20px 50px -15px rgba(0,0,0,0.8)",
+                    background:
+                      "radial-gradient(ellipse at center, #141414 0%, #0a0a0a 100%)",
                   }}
                 >
                   <img
@@ -87,7 +89,7 @@ export function JourneyTimeline({ onOpenPhoto }: { onOpenPhoto: (i: number) => v
                     alt={`${p.year} — ${p.title}`}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover transition-all duration-700 ease-luxury group-hover:scale-105"
+                    className="h-full w-full object-contain transition-all duration-700 ease-luxury group-hover:scale-[1.03]"
                   />
                   <span
                     aria-hidden
