@@ -46,7 +46,8 @@ function Index() {
     // This keeps the luxury pacing consistent on mobile and desktop.
     const baseSpeedVhPerSecond = 0.18;
     const speedMultiplier = 1.25;
-    const speed = window.innerHeight * baseSpeedVhPerSecond * speedMultiplier;
+
+    const getSpeed = () => window.innerHeight * baseSpeedVhPerSecond * speedMultiplier;
 
     const stop = () => {
       stopped = true;
@@ -63,7 +64,7 @@ function Index() {
       const dt = (ts - last) / 1000;
       last = ts;
       const maxY = document.documentElement.scrollHeight - window.innerHeight;
-      const next = Math.min(window.scrollY + speed * dt, maxY);
+      const next = Math.min(window.scrollY + getSpeed() * dt, maxY);
       window.scrollTo(0, next);
       if (next >= maxY - 1) return;
       raf = requestAnimationFrame(step);
