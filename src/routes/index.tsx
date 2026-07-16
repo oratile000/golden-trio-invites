@@ -33,6 +33,54 @@ function Index() {
     return () => clearTimeout(t);
   }, []);
 
+  // Auto-scroll the page after the card opens (gentle 1.25x cinematic pace).
+  useEffect(() => {
+    if (!opened) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    let raf = 0;
+    let last = 0;
+    let stopped = false;
+    // Base ~44 px/s * 1.25 speed = 55 px/s. Smooth, readable, not sleepy.
+    const speed = 55;
+
+    const stop = () => {
+      stopped = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchstart", stop);
+      window.removeEventListener("keydown", stop);
+      window.removeEventListener("mousedown", stop);
+    };
+
+    const step = (ts: number) => {
+      if (stopped) return;
+      if (!last) last = ts;
+      const dt = (ts - last) / 1000;
+      last = ts;
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      const next = Math.min(window.scrollY + speed * dt, maxY);
+      window.scrollTo(0, next);
+      if (next >= maxY - 1) return;
+      raf = requestAnimationFrame(step);
+    };
+
+    // Small delay so the welcome animation lands before we start moving.
+    const startId = window.setTimeout(() => {
+      window.addEventListener("wheel", stop, { passive: true });
+      window.addEventListener("touchstart", stop, { passive: true });
+      window.addEventListener("keydown", stop);
+      window.addEventListener("mousedown", stop);
+      raf = requestAnimationFrame(step);
+    }, 2200);
+
+    return () => {
+      window.clearTimeout(startId);
+      stop();
+    };
+  }, [opened]);
+
   const handleOpen = () => {
     setOpened(true);
     setFireworks(true);

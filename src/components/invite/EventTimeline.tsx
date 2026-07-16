@@ -32,9 +32,9 @@ const events: Event[] = [
   {
     time: "5:00 PM",
     title: "The Matric Dance",
-    venue: "La Perna Guesthouse & Venue",
-    address: "780 Breed Street, Pretoria, 0182",
-    mapsQuery: "La Perna Guesthouse, 780 Breed Street, Pretoria",
+    venue: "Colosseum Reale",
+    address: "Pretoria",
+    mapsQuery: "Colosseum Reale, Pretoria",
     icon: "dance",
   },
 ];
@@ -226,18 +226,18 @@ export function EventTimeline() {
           <p
             className="font-display text-cream"
             style={{
-              fontSize: "clamp(1.8rem, 5vw, 3rem)",
-              letterSpacing: "0.35em",
+              fontSize: "clamp(1.5rem, 4.2vw, 2.4rem)",
+              letterSpacing: "0.3em",
               lineHeight: 1.2,
             }}
           >
-            ALL BLACK
+            BLACK — FORMAL OR CASUAL
           </p>
           <p
             className="font-serif italic text-gold-deep mt-6 mx-auto max-w-lg"
             style={{ fontSize: "clamp(1rem, 1.7vw, 1.15rem)", lineHeight: 1.7 }}
           >
-            Formal black attire — gowns, tuxedos, and suits.
+            Wear black — dress it up formal, or keep it smart casual.
             Gold accents are welcomed, in honour of the evening.
           </p>
         </div>
