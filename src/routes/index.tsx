@@ -42,8 +42,11 @@ function Index() {
     let raf = 0;
     let last = 0;
     let stopped = false;
-    // Base ~44 px/s * 1.25 speed = 55 px/s. Smooth, readable, not sleepy.
-    const speed = 55;
+    // Base 18% of viewport height per second, played at 1.25x.
+    // This keeps the luxury pacing consistent on mobile and desktop.
+    const baseSpeedVhPerSecond = 0.18;
+    const speedMultiplier = 1.25;
+    const speed = window.innerHeight * baseSpeedVhPerSecond * speedMultiplier;
 
     const stop = () => {
       stopped = true;
