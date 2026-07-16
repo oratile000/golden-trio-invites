@@ -238,7 +238,6 @@ export function EventTimeline() {
             style={{ fontSize: "clamp(1rem, 1.7vw, 1.15rem)", lineHeight: 1.7 }}
           >
             Wear black — dress it up formal, or keep it smart casual.
-            Gold accents are welcomed, in honour of the evening.
           </p>
         </div>
       </motion.div>
