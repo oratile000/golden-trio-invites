@@ -42,10 +42,10 @@ function Index() {
     let raf = 0;
     let last = 0;
     let stopped = false;
-    // Base 18% of viewport height per second, played at 1.25x.
+    // Base 18% of viewport height per second, played at 1.20x.
     // This keeps the luxury pacing consistent on mobile and desktop.
     const baseSpeedVhPerSecond = 0.18;
-    const speedMultiplier = 1.25;
+    const speedMultiplier = 1.20;
 
     const getSpeed = () => window.innerHeight * baseSpeedVhPerSecond * speedMultiplier;
 
