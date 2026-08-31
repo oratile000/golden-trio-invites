@@ -36,7 +36,17 @@ function Index() {
     return () => clearTimeout(t);
   }, []);
 
-  // Auto-scroll the page after the card opens (gentle 1.25x cinematic pace).
+  // Track prefers-reduced-motion so we can hide manual autoplay controls too.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+
+  // Auto-scroll the page after the card opens (gentle cinematic pace).
   useEffect(() => {
     if (!opened) return;
     if (typeof window === "undefined") return;
@@ -45,6 +55,7 @@ function Index() {
     let raf = 0;
     let last = 0;
     let stopped = false;
+    pausedRef.current = false;
     // Base 18% of viewport height per second, played at 0.95x.
     // This keeps the luxury pacing consistent on mobile and desktop.
     const baseSpeedVhPerSecond = 0.18;
@@ -58,18 +69,28 @@ function Index() {
       window.removeEventListener("wheel", stop);
       window.removeEventListener("touchstart", stop);
       window.removeEventListener("keydown", stop);
-      window.removeEventListener("mousedown", stop);
+      setAutoPlaying(false);
     };
 
     const step = (ts: number) => {
       if (stopped) return;
+      if (pausedRef.current) {
+        // Paused: keep the loop alive but don't advance; reset clock so
+        // resume doesn't jump forward by the paused duration.
+        last = ts;
+        raf = requestAnimationFrame(step);
+        return;
+      }
       if (!last) last = ts;
       const dt = (ts - last) / 1000;
       last = ts;
       const maxY = document.documentElement.scrollHeight - window.innerHeight;
       const next = Math.min(window.scrollY + getSpeed() * dt, maxY);
       window.scrollTo(0, next);
-      if (next >= maxY - 1) return;
+      if (next >= maxY - 1) {
+        setAutoPlaying(false);
+        return;
+      }
       raf = requestAnimationFrame(step);
     };
 
@@ -78,8 +99,8 @@ function Index() {
       window.addEventListener("wheel", stop, { passive: true });
       window.addEventListener("touchstart", stop, { passive: true });
       window.addEventListener("keydown", stop);
-      window.addEventListener("mousedown", stop);
       raf = requestAnimationFrame(step);
+      setAutoPlaying(true);
     }, 2200);
 
     return () => {
@@ -87,6 +108,11 @@ function Index() {
       stop();
     };
   }, [opened]);
+
+  const toggleAutoplay = () => {
+    pausedRef.current = !pausedRef.current;
+    setAutoPlaying(!pausedRef.current);
+  };
 
   const handleOpen = () => {
     setOpened(true);
