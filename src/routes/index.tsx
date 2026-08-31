@@ -26,7 +26,10 @@ function Index() {
   const [fireworks, setFireworks] = useState(false);
   const [muted, setMuted] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [autoPlaying, setAutoPlaying] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const pausedRef = useRef(false);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 3000);
