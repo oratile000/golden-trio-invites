@@ -194,6 +194,27 @@ function Index() {
         </AnimatePresence>
       )}
 
+      {opened && !reducedMotion && (
+        <button
+          type="button"
+          onClick={toggleAutoplay}
+          aria-label={autoPlaying ? "Pause cinematic auto-scroll" : "Resume cinematic auto-scroll"}
+          title={autoPlaying ? "Pause auto-scroll" : "Resume auto-scroll"}
+          className="fixed bottom-6 right-20 z-[95] h-11 w-11 rounded-full border border-gold/60 bg-noir/70 backdrop-blur text-gold flex items-center justify-center transition-all duration-300 ease-luxury hover:bg-gold hover:text-noir hover:scale-110"
+        >
+          {autoPlaying ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="9" y1="5" x2="9" y2="19" />
+              <line x1="15" y1="5" x2="15" y2="19" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="6 4 20 12 6 20 6 4" />
+            </svg>
+          )}
+        </button>
+      )}
+
       {opened && (
         <button
           type="button"
