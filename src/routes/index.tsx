@@ -29,7 +29,7 @@ function Index() {
   const [autoPlaying, setAutoPlaying] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const pausedRef = useRef(false);
+  const hasStartedRef = useRef(false);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 3000);
@@ -46,16 +46,27 @@ function Index() {
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
 
-  // Auto-scroll the page after the card opens (gentle cinematic pace).
+  // Kick off cinematic auto-scroll once the card opens.
   useEffect(() => {
     if (!opened) return;
     if (typeof window === "undefined") return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const startId = window.setTimeout(() => {
+      hasStartedRef.current = true;
+      setAutoPlaying(true);
+    }, 2200);
+    return () => window.clearTimeout(startId);
+  }, [opened]);
+
+  // The actual scroll loop — runs whenever autoPlaying is true, so pausing
+  // and resuming simply tears the loop down and spins it back up.
+  useEffect(() => {
+    if (!autoPlaying) return;
+    if (typeof window === "undefined") return;
 
     let raf = 0;
     let last = 0;
     let stopped = false;
-    pausedRef.current = false;
     // Base 18% of viewport height per second, played at 0.95x.
     // This keeps the luxury pacing consistent on mobile and desktop.
     const baseSpeedVhPerSecond = 0.18;
@@ -63,24 +74,21 @@ function Index() {
 
     const getSpeed = () => window.innerHeight * baseSpeedVhPerSecond * speedMultiplier;
 
-    const stop = () => {
+    const interrupt = () => {
+      // Manual scroll / key press takes over — pause the cinematic scroll.
+      setAutoPlaying(false);
+    };
+
+    const cleanup = () => {
       stopped = true;
       cancelAnimationFrame(raf);
-      window.removeEventListener("wheel", stop);
-      window.removeEventListener("touchstart", stop);
-      window.removeEventListener("keydown", stop);
-      setAutoPlaying(false);
+      window.removeEventListener("wheel", interrupt);
+      window.removeEventListener("touchstart", interrupt);
+      window.removeEventListener("keydown", interrupt);
     };
 
     const step = (ts: number) => {
       if (stopped) return;
-      if (pausedRef.current) {
-        // Paused: keep the loop alive but don't advance; reset clock so
-        // resume doesn't jump forward by the paused duration.
-        last = ts;
-        raf = requestAnimationFrame(step);
-        return;
-      }
       if (!last) last = ts;
       const dt = (ts - last) / 1000;
       last = ts;
@@ -94,24 +102,16 @@ function Index() {
       raf = requestAnimationFrame(step);
     };
 
-    // Small delay so the welcome animation lands before we start moving.
-    const startId = window.setTimeout(() => {
-      window.addEventListener("wheel", stop, { passive: true });
-      window.addEventListener("touchstart", stop, { passive: true });
-      window.addEventListener("keydown", stop);
-      raf = requestAnimationFrame(step);
-      setAutoPlaying(true);
-    }, 2200);
+    window.addEventListener("wheel", interrupt, { passive: true });
+    window.addEventListener("touchstart", interrupt, { passive: true });
+    window.addEventListener("keydown", interrupt);
+    raf = requestAnimationFrame(step);
 
-    return () => {
-      window.clearTimeout(startId);
-      stop();
-    };
-  }, [opened]);
+    return cleanup;
+  }, [autoPlaying]);
 
   const toggleAutoplay = () => {
-    pausedRef.current = !pausedRef.current;
-    setAutoPlaying(!pausedRef.current);
+    setAutoPlaying((playing) => !playing);
   };
 
   const handleOpen = () => {
