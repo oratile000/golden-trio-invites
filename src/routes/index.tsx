@@ -26,14 +26,27 @@ function Index() {
   const [fireworks, setFireworks] = useState(false);
   const [muted, setMuted] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [autoPlaying, setAutoPlaying] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const pausedRef = useRef(false);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(t);
   }, []);
 
-  // Auto-scroll the page after the card opens (gentle 1.25x cinematic pace).
+  // Track prefers-reduced-motion so we can hide manual autoplay controls too.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+
+  // Auto-scroll the page after the card opens (gentle cinematic pace).
   useEffect(() => {
     if (!opened) return;
     if (typeof window === "undefined") return;
@@ -42,6 +55,7 @@ function Index() {
     let raf = 0;
     let last = 0;
     let stopped = false;
+    pausedRef.current = false;
     // Base 18% of viewport height per second, played at 0.95x.
     // This keeps the luxury pacing consistent on mobile and desktop.
     const baseSpeedVhPerSecond = 0.18;
@@ -55,18 +69,28 @@ function Index() {
       window.removeEventListener("wheel", stop);
       window.removeEventListener("touchstart", stop);
       window.removeEventListener("keydown", stop);
-      window.removeEventListener("mousedown", stop);
+      setAutoPlaying(false);
     };
 
     const step = (ts: number) => {
       if (stopped) return;
+      if (pausedRef.current) {
+        // Paused: keep the loop alive but don't advance; reset clock so
+        // resume doesn't jump forward by the paused duration.
+        last = ts;
+        raf = requestAnimationFrame(step);
+        return;
+      }
       if (!last) last = ts;
       const dt = (ts - last) / 1000;
       last = ts;
       const maxY = document.documentElement.scrollHeight - window.innerHeight;
       const next = Math.min(window.scrollY + getSpeed() * dt, maxY);
       window.scrollTo(0, next);
-      if (next >= maxY - 1) return;
+      if (next >= maxY - 1) {
+        setAutoPlaying(false);
+        return;
+      }
       raf = requestAnimationFrame(step);
     };
 
@@ -75,8 +99,8 @@ function Index() {
       window.addEventListener("wheel", stop, { passive: true });
       window.addEventListener("touchstart", stop, { passive: true });
       window.addEventListener("keydown", stop);
-      window.addEventListener("mousedown", stop);
       raf = requestAnimationFrame(step);
+      setAutoPlaying(true);
     }, 2200);
 
     return () => {
@@ -84,6 +108,11 @@ function Index() {
       stop();
     };
   }, [opened]);
+
+  const toggleAutoplay = () => {
+    pausedRef.current = !pausedRef.current;
+    setAutoPlaying(!pausedRef.current);
+  };
 
   const handleOpen = () => {
     setOpened(true);
@@ -163,6 +192,27 @@ function Index() {
             </motion.div>
           )}
         </AnimatePresence>
+      )}
+
+      {opened && !reducedMotion && (
+        <button
+          type="button"
+          onClick={toggleAutoplay}
+          aria-label={autoPlaying ? "Pause cinematic auto-scroll" : "Resume cinematic auto-scroll"}
+          title={autoPlaying ? "Pause auto-scroll" : "Resume auto-scroll"}
+          className="fixed bottom-6 right-20 z-[95] h-11 w-11 rounded-full border border-gold/60 bg-noir/70 backdrop-blur text-gold flex items-center justify-center transition-all duration-300 ease-luxury hover:bg-gold hover:text-noir hover:scale-110"
+        >
+          {autoPlaying ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="9" y1="5" x2="9" y2="19" />
+              <line x1="15" y1="5" x2="15" y2="19" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="6 4 20 12 6 20 6 4" />
+            </svg>
+          )}
+        </button>
       )}
 
       {opened && (
