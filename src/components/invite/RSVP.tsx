@@ -37,11 +37,19 @@ export function RSVP() {
       `Response: ${attending}`,
     ];
     if (form.message.trim()) lines.push(`Message: ${form.message.trim()}`);
+    lines.push("", `Invitation: ${SITE_URL}`);
+    upsertGuest({
+      name: form.name.trim(),
+      guests: Number(form.guests) || 1,
+      status: form.attending === "yes" ? "yes" : "no",
+      message: form.message.trim() || undefined,
+    });
     const text = encodeURIComponent(lines.join("\n"));
-    const url = `https://wa.me/27660647265?text=${text}`;
+    const url = `https://wa.me/${RSVP_WHATSAPP}?text=${text}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setSubmitted(true);
   };
+
 
   const inputClass =
     "w-full bg-transparent border-b border-gold/40 focus:border-gold outline-none px-1 py-3 text-cream font-serif text-base transition-colors placeholder:text-gold-deep/60";
@@ -197,8 +205,9 @@ export function RSVP() {
               </p>
               <p className="font-serif text-cream/85 mt-4" style={{ fontSize: "clamp(0.95rem, 1.6vw, 1.05rem)", lineHeight: 1.7 }}>
                 {form.attending === "yes"
-                  ? "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 66 064 7265 to confirm. We cannot wait to celebrate with you on the 23rd of September, 2026."
-                  : "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 66 064 7265. You will be dearly missed — thank you for being part of our journey."}
+                  ? "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 76 496 9438 to confirm. We cannot wait to celebrate with you on the 23rd of September, 2026."
+                  : "Your response is on its way to the hosts via WhatsApp. If it did not open automatically, please message +27 76 496 9438. You will be dearly missed — thank you for being part of our journey."}
+
               </p>
               <p className="font-label uppercase text-gold-deep mt-8" style={{ fontSize: "0.7rem", letterSpacing: "0.45em" }}>
                 With love — O · O · O
